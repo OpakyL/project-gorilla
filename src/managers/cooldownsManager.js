@@ -11,7 +11,6 @@ function readCooldowns() {
     const data = fs.readFileSync(cooldownsFilePath, "utf-8");
     return JSON.parse(data);
   } catch (error) {
-    console.error("Error reading cooldowns file:", error);
     return {};
   }
 }
@@ -20,7 +19,7 @@ function writeCooldowns(data) {
   try {
     fs.writeFileSync(cooldownsFilePath, JSON.stringify(data, null, 2));
   } catch (error) {
-    console.error("Error writing cooldowns file:", error);
+    return false;
   }
 }
 

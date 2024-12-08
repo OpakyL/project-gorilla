@@ -4,16 +4,27 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "dev": "nodemon bot.js",
-    "prod": "pm2 start bot.js --env production && pm2 monit",
+    "dev": "NODE_ENV=development nodemon bot.js",
+    "prod": "NODE_ENV=production pm2 start bot.js && pm2 monit",
     "stop": "pm2 stop bot"
   },
   "author": "OpakyL",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
+    "module-alias": "^2.2.3",
     "morpher-ws3-client": "^1.0.8",
     "mystem3": "^1.2.1",
     "node-telegram-bot-api": "^0.66.0"
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@ids": "./src/config/ids.js",
+    "@comands": "./src/config/comands.js",
+    "@checkers": "./src/utils/checkers.js",
+    "@getters": "./src/utils/getters.js",
+    "@cooldownsManager": "./src/managers/cooldownsManager.js",
+    "@morpher": "./src/services/morpher.js",
+    "@logger": "./src/utils/logger.js"
   }
 }

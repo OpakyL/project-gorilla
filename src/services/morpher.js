@@ -1,32 +1,32 @@
 const Morpher = require("morpher-ws3-client");
 const MyStem = require("mystem3");
-const { getMessageText } = require("./utils");
+const { getMessageText, getRandomItemFromArray } = require("@getters");
 
 const morpher = new Morpher({ token: process.env.MORPHER_TOKEN });
 const myStem = new MyStem();
 
 myStem.start();
 
+async function getNouns(words) {
+  const grammemes = await Promise.all(
+    words.map((word) => myStem.extractAllGrammemes(word))
+  );
+
+  return words.filter(
+    (_, i) => Array.isArray(grammemes[i]) && grammemes[i][1] === "S"
+  );
+}
+
 async function pluralizeMessageForPidors(msg) {
   const message = getMessageText(msg);
 
   if (!message) return false;
 
-  const words = message.split(/\s+/);
-
-  const nouns = [];
-  for (const word of words) {
-    const result = await myStem.extractAllGrammemes(word);
-
-    if (Array.isArray(result) && result[1] === "S") {
-      const lemmatized = await myStem.lemmatize(word);
-      nouns.push(lemmatized);
-    }
-  }
+  const nouns = await getNouns(message.split(/\s+/));
 
   if (nouns.length === 0) return false;
 
-  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  const randomNoun = getRandomItemFromArray(nouns);
 
   const declension = await morpher.russian.declension(randomNoun);
   if (declension) {
