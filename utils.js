@@ -5,10 +5,11 @@ const {
   RESPONSES,
   REGEXS,
   FILE_IDS,
+  STICKER_IDS,
 } = require("./config");
 
 function checkIfCanReply(msg) {
-  return !msg.from.is_bot && msg.chat.type !== "personal";
+  return !msg.from.is_bot && !msg.forward_from && msg.chat.type !== "personal";
 }
 
 function checkMessageSender(msg, person) {
@@ -24,23 +25,23 @@ function checkMessageThread(msg, thread) {
 }
 
 function checkMessageByType(msg, type, code) {
-  const message = msg.text || msg.caption;
+  const message = getMessageText(msg);
 
-  if (!message) return false;
+  if (!message && type !== "stickerId" && type !== "photo") return false;
 
-  switch (type) {
-    case "code":
-      return message.toLowerCase() === MESSAGES[code];
-    case "regex":
-      return REGEXS[code].test(message);
-    case "includes":
-      return message.toLowerCase().includes(MESSAGES[code]);
-    case "photo":
-      return !!msg.photo;
+  const typeCheckers = {
+    code: () => message.toLowerCase() === MESSAGES[code],
+    regex: () => REGEXS[code].test(message),
+    includes: () => message.toLowerCase().includes(MESSAGES[code]),
+    photo: () => !!msg.photo,
+    stickerId: () => !!msg.sticker && msg.sticker.file_id === STICKER_IDS[code],
+  };
 
-    default:
-      return false;
-  }
+  return typeCheckers[type] ? typeCheckers[type]() : false;
+}
+
+function getMessageText(msg) {
+  return msg.text || msg.caption;
 }
 
 function getResponseByCode(code) {
@@ -67,6 +68,7 @@ module.exports = {
   checkMessageSender,
   checkMessageThread,
   checkMessageByType,
+  getMessageText,
   getResponseByCode,
   getRandomResponseByCode,
   getFileIdByCode,

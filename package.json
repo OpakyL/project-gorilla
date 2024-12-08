@@ -4,13 +4,16 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon bot.js",
+    "prod": "pm2 start bot.js --env production && pm2 monit",
+    "stop": "pm2 stop bot"
   },
   "author": "OpakyL",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
     "morpher-ws3-client": "^1.0.8",
+    "mystem3": "^1.2.1",
     "node-telegram-bot-api": "^0.66.0"
   }
 }

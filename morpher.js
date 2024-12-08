@@ -1,58 +1,41 @@
-// const { Morpher } = require("morpher-ws3-client");
+const Morpher = require("morpher-ws3-client");
+const MyStem = require("mystem3");
+const { getMessageText } = require("./utils");
 
-// // Создаем экземпляр клиента Morpher
-// const morpher = new Morpher({ token: process.env.MORPHER_TOKEN });
+const morpher = new Morpher({ token: process.env.MORPHER_TOKEN });
+const myStem = new MyStem();
 
-// // Функция для обработки сообщения
-// async function processMessage(msg) {
-//   const message = msg.text || msg.caption;
+myStem.start();
 
-//   if (!message) return false;
-//   // Разбиваем сообщение на слова
-//   const words = message.split(/\s+/);
+async function pluralizeMessageForPidors(msg) {
+  const message = getMessageText(msg);
 
-//   let selectedWord = null;
+  if (!message) return false;
 
-//   // Ищем первое слово, которое можно склонить
-//   for (const word of words) {
-//     try {
-//       // Проверяем, является ли слово существительным
-//       const result = await morpher.russian.declension(word);
-//       if (result && result.plural) {
-//         selectedWord = word;
-//         break;
-//       }
-//     } catch (err) {
-//       console.log(`Ошибка для слова "${word}":`, err.message);
-//     }
-//   }
+  const words = message.split(/\s+/);
 
-//   // Если подходящее слово не найдено
-//   if (!selectedWord) {
-//     return "Нет подходящих слов в сообщении.";
-//   }
+  const nouns = [];
+  for (const word of words) {
+    const result = await myStem.extractAllGrammemes(word);
 
-//   // Склоняем выбранное слово во множественное число
-//   try {
-//     const declension = await morpher.russian.declension(selectedWord);
-//     const pluralForm = declension.plural;
+    if (Array.isArray(result) && result[1] === "S") {
+      const lemmatized = await myStem.lemmatize(word);
+      nouns.push(lemmatized);
+    }
+  }
 
-//     if (!pluralForm) {
-//       return `Не смог склонить слово: ${selectedWord}`;
-//     }
+  if (nouns.length === 0) return false;
 
-//     // Формируем ответ
-//     return `${pluralForm} для пидоров`;
-//   } catch (err) {
-//     return `Ошибка при склонении слова: ${err.message}`;
-//   }
-// }
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
 
-// // const testmsg = { text: "Раз я его приватным сделал" };
-// // processMessage(testmsg)
-// //   .then((response) => console.log(response))
-// //   .catch((err) => console.error(err));
+  const declension = await morpher.russian.declension(randomNoun);
+  if (declension) {
+    const pluralNoun = declension.plural.nominative;
 
-// module.exports = {
-//   processMessage,
-// };
+    return `${pluralNoun} для пидоров`;
+  }
+}
+
+module.exports = {
+  pluralizeMessageForPidors,
+};
