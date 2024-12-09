@@ -2,3 +2,5 @@
 node_modules/
 .todo
 cooldowns.json
+logs/
+dist/

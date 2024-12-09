@@ -1,30 +1,37 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "bot.js",
+  "description": "Project G.O.R.I.L.L.A",
+  "main": "src/bot.ts",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon bot.js",
-    "prod": "NODE_ENV=production pm2 start bot.js && pm2 monit",
-    "stop": "pm2 stop bot"
+    "dev": "ts-node -r tsconfig-paths/register src/bot.ts",
+    "build": "npx tsc",
+    "start": "NODE_ENV=production pm2 start dist/bot.js",
+    "stop": "pm2 stop bot",
+    "lint": "eslint",
+    "lint:reconfigure": "npx @eslint/migrate-config .eslintrc.json"
   },
   "author": "OpakyL",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "module-alias": "^2.2.3",
     "morpher-ws3-client": "^1.0.8",
     "mystem3": "^1.2.1",
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "winston": "^3.17.0"
   },
-  "_moduleAliases": {
-    "@root": ".",
-    "@ids": "./src/config/ids.js",
-    "@comands": "./src/config/comands.js",
-    "@checkers": "./src/utils/checkers.js",
-    "@getters": "./src/utils/getters.js",
-    "@cooldownsManager": "./src/managers/cooldownsManager.js",
-    "@morpher": "./src/services/morpher.js",
-    "@logger": "./src/utils/logger.js"
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.16.0",
+    "@eslint/migrate-config": "^1.3.5",
+    "@types/node": "^22.10.1",
+    "@types/node-telegram-bot-api": "^0.64.7",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
   }
 }

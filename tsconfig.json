@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "paths": {
+      "@myTypes/*": ["src/types/*"],
+      "@utils/*": ["src/utils/*"],
+      "@getters": ["src/utils/getters.ts"],
+      "@checkers": ["src/utils/checkers.ts"],
+      "@comands": ["src/config/comands.ts"],
+      "@ids": ["src/config/ids.ts"],
+      "@services/*": ["src/services/*"],
+      "@managers/*": ["src/managers/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts"]
+}
