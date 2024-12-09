@@ -18,7 +18,6 @@ if (!process.env.BOT_TOKEN) {
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
 bot.on("message", async (msg) => {
-  logger.error(`Uncaught Exception: ${msg}`);
   if (checkIfCanReply(msg)) {
     for (const comand of Object.values(comands)) {
       const additionalCheckers = comand.additionalCheckers?.(msg) ?? true;

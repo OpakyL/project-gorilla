@@ -4,7 +4,7 @@
   "description": "Project G.O.R.I.L.L.A",
   "main": "src/bot.ts",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register src/bot.ts",
+    "dev": "ts-node --files -r tsconfig-paths/register src/bot.ts",
     "clean": "rm -rf dist",
     "build": "npm run clean && npx tsc",
     "prod": "pm2 start ecosystem.config.js --env production && pm2 monit",
