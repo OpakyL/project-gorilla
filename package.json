@@ -5,9 +5,11 @@
   "main": "src/bot.ts",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/bot.ts",
-    "build": "npx tsc",
-    "start": "NODE_ENV=production pm2 start dist/bot.js",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npx tsc",
+    "prod": "pm2 start ecosystem.config.js --env production",
     "stop": "pm2 stop bot",
+    "restart": "npm run build && pm2 restart bot",
     "lint": "eslint",
     "lint:reconfigure": "npx @eslint/migrate-config .eslintrc.json"
   },
