@@ -7,7 +7,7 @@
     "dev": "ts-node -r tsconfig-paths/register src/bot.ts",
     "clean": "rm -rf dist",
     "build": "npm run clean && npx tsc",
-    "prod": "pm2 start ecosystem.config.js --env production",
+    "prod": "pm2 start ecosystem.config.js --env production && pm2 monit",
     "stop": "pm2 stop bot",
     "restart": "npm run build && pm2 restart bot",
     "lint": "eslint",

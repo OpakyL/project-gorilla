@@ -11,6 +11,10 @@ import comands from "@comands";
 
 import logger from "@utils/logger";
 
+if (!process.env.BOT_TOKEN) {
+  throw new Error("BOT_TOKEN is not defined in the environment variables");
+}
+
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
 bot.on("message", async (msg) => {
