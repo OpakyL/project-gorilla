@@ -1,8 +1,9 @@
 {
-  "name": "telegram-bot",
-  "version": "1.0.0",
+  "name": "project-gorilla",
+  "author": "OpakyL",
   "description": "Project G.O.R.I.L.L.A",
   "main": "src/bot.ts",
+  "license": "ISC",
   "scripts": {
     "prepare": "ts-patch install",
     "dev": "ts-node --files -r tsconfig-paths/register src/bot.ts",
@@ -14,8 +15,6 @@
     "lint": "eslint",
     "lint:reconfigure": "npx @eslint/migrate-config .eslintrc.json"
   },
-  "author": "OpakyL",
-  "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
     "morpher-ws3-client": "^1.0.8",
