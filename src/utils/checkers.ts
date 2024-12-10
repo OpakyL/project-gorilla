@@ -1,4 +1,4 @@
-import { USER_IDS, THREAD_IDS } from "@ids";
+import IdsFactory from "@factories/idsFactory";
 import { getMessageText } from "@getters";
 
 import TelegramBot from "node-telegram-bot-api";
@@ -8,7 +8,7 @@ function checkIfCanReply(msg: TelegramBot.Message): boolean {
 }
 
 function checkMessageSender(msg: TelegramBot.Message, person: string): boolean {
-  return msg.from?.id === USER_IDS[person];
+  return msg.from?.id === IdsFactory.getId("userIds")[person];
 }
 
 function checkMessageThread(msg: TelegramBot.Message, thread: string): boolean {
@@ -16,7 +16,7 @@ function checkMessageThread(msg: TelegramBot.Message, thread: string): boolean {
     return !msg.message_thread_id;
   }
 
-  return msg.message_thread_id === THREAD_IDS[thread];
+  return msg.message_thread_id === IdsFactory.getId("threadIds")[thread];
 }
 
 function checkMessageByType(
@@ -30,7 +30,7 @@ function checkMessageByType(
     return false;
 
   const typeCheckers: Record<string, () => boolean> = {
-    code: () =>
+    exact: () =>
       typeof matcher === "string" && message.toLowerCase() === matcher,
     regex: () => matcher instanceof RegExp && matcher.test(message),
     includes: () =>

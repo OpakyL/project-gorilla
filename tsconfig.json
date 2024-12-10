@@ -13,12 +13,14 @@
       "@utils/*": ["src/utils/*"],
       "@getters": ["src/utils/getters.ts"],
       "@checkers": ["src/utils/checkers.ts"],
-      "@comands": ["src/config/comands.ts"],
-      "@ids": ["src/config/ids.ts"],
       "@services/*": ["src/services/*"],
-      "@managers/*": ["src/managers/*"]
+      "@managers/*": ["src/managers/*"],
+      "@factories/*": ["src/factories/*"]
     },
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+    ]
   },
   "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
   "exclude": ["dist"]

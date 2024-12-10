@@ -4,10 +4,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { checkIfCanReply, checkMessageByType } from "@checkers";
+import { getMessageText } from "@getters";
 import { pluralizeMessageForPidors } from "@services/morpher";
 import { getCooldown, setCooldown } from "@managers/cooldownsManager";
 
-import comands from "@comands";
+import IdsFactory from "@factories/idsFactory";
+
+import CommandFactory from "@factories/commandFactory";
+import { CommandTypes } from "@myTypes/commands.types";
 
 import logger from "@utils/logger";
 
@@ -19,41 +23,59 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
 bot.on("message", async (msg) => {
   if (checkIfCanReply(msg)) {
-    for (const comand of Object.values(comands)) {
-      const additionalCheckers = comand.additionalCheckers?.(msg) ?? true;
+    const message = getMessageText(msg);
 
-      if (
-        checkMessageByType(msg, comand.type, comand.matcher) &&
-        additionalCheckers
-      ) {
-        const botMethod = comand.customBotMethod ?? "sendMessage";
-        const response = comand.responseFunc?.() ?? comand.response ?? "";
+    if (message === "/reload") {
+      CommandFactory.reloadCommands();
+      IdsFactory.reloadIds();
 
-        bot[botMethod](msg.chat.id, response, {
-          message_thread_id: msg.message_thread_id,
-          ...(comand.shouldReply && {
-            reply_to_message_id: msg.message_id,
-          }),
-        });
+      bot.sendMessage(msg.chat.id, "Обновление конфига завершено", {
+        message_thread_id: msg.message_thread_id,
+      });
 
-        return;
-      }
+      return;
     }
 
-    const chatId = msg.chat.id.toString();
-    const now = Date.now();
-    const lastCooldown = getCooldown(chatId);
+    const commands = CommandFactory.getCommands();
+    for (const commandKey of Object.keys(commands) as CommandTypes[]) {
+      commands[commandKey].forEach((command) => {
+        const additionalChecker = command.additionalChecker?.(msg) ?? true;
 
-    if (now - lastCooldown > 30 * 60 * 1000) {
-      const pluralizedMessageForPidors = await pluralizeMessageForPidors(msg);
+        if (
+          checkMessageByType(msg, commandKey, command.matcher) &&
+          additionalChecker
+        ) {
+          const botMethod = command.customBotMethod ?? "sendMessage";
+          const response = command.responseFunc?.() ?? command.response ?? "";
 
-      if (pluralizedMessageForPidors) {
-        bot.sendMessage(msg.chat.id, pluralizedMessageForPidors, {
-          message_thread_id: msg.message_thread_id,
-          reply_to_message_id: msg.message_id,
-        });
+          bot[botMethod](msg.chat.id, response, {
+            message_thread_id: msg.message_thread_id,
+            ...(command.shouldReply && {
+              reply_to_message_id: msg.message_id,
+            }),
+          });
 
-        setCooldown(chatId, now);
+          return;
+        }
+      });
+    }
+
+    if (process.env.MORPHER_TOKEN) {
+      const chatId = msg.chat.id.toString();
+      const now = Date.now();
+      const lastCooldown = getCooldown(chatId);
+
+      if (now - lastCooldown > 60 * 60 * 1000) {
+        const pluralizedMessageForPidors = await pluralizeMessageForPidors(msg);
+
+        if (pluralizedMessageForPidors) {
+          bot.sendMessage(msg.chat.id, pluralizedMessageForPidors, {
+            message_thread_id: msg.message_thread_id,
+            reply_to_message_id: msg.message_id,
+          });
+
+          setCooldown(chatId, now);
+        }
       }
     }
   }

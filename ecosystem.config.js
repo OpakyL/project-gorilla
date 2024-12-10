@@ -3,7 +3,6 @@ module.exports = {
     {
       name: "bot",
       script: "dist/bot.js",
-      node_args: "-r tsconfig-paths/register",
       env: {
         NODE_ENV: "development",
       },

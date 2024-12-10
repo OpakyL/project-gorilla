@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+
+import { ensureFileExists } from "@utils/utils";
 import logger from "@utils/logger";
 
 import { Cooldowns } from "@myTypes/cooldowns.types";
@@ -8,9 +10,8 @@ const cooldownsFilePath = path.resolve(__dirname, "cooldowns.json");
 
 function readCooldowns(): Cooldowns {
   try {
-    if (!fs.existsSync(cooldownsFilePath)) {
-      fs.writeFileSync(cooldownsFilePath, JSON.stringify({}));
-    }
+    ensureFileExists(cooldownsFilePath);
+
     const data = fs.readFileSync(cooldownsFilePath, "utf-8");
     const cooldowns: Cooldowns = JSON.parse(data) || {};
     return cooldowns;
